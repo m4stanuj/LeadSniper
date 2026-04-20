@@ -1,0 +1,21 @@
+# Environment
+.env
+*.pyc
+__pycache__/
+
+# Output files
+fast_leads.json
+fresh_gigs_*.json
+gig3_3d_leads_*.json
+TOP_GIGS_*.txt
+campaign_log_*.json
+GIG3_FULL_LEAD_LIST.csv
+premium_b2b_leads.csv
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store

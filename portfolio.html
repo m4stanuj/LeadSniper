@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M4ST — AI Automation & Content Services</title>
+    <meta name="description" content="AI-powered automation, video editing, lead generation, and content creation services.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a2e;
+            --accent: #6c63ff;
+            --accent-glow: #7c74ff;
+            --accent-2: #00d4aa;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888aa;
+            --gradient-1: linear-gradient(135deg, #6c63ff, #00d4aa);
+            --gradient-2: linear-gradient(135deg, #ff6b6b, #ffa07a);
+            --border: rgba(108, 99, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        /* Animated background */
+        .bg-grid {
+            position: fixed; inset: 0; z-index: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(108,99,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,212,170,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(255,107,107,0.04) 0%, transparent 50%);
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+        
+        /* Hero */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(108,99,255,0.12); border: 1px solid var(--border);
+            border-radius: 100px; padding: 8px 20px;
+            font-size: 13px; font-weight: 500; color: var(--accent-glow);
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease;
+        }
+        .hero-badge::before { content: '⚡'; }
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.6s ease 0.1s both;
+        }
+        .hero p {
+            font-size: 1.15rem; color: var(--text-secondary);
+            max-width: 600px; margin: 0 auto 32px;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+        .hero-cta {
+            display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+            animation: fadeInUp 0.6s ease 0.3s both;
+        }
+        .btn {
+            padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 600;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.3s ease; cursor: pointer; border: none;
+        }
+        .btn-primary {
+            background: var(--gradient-1); color: white;
+            box-shadow: 0 4px 24px rgba(108,99,255,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(108,99,255,0.45); }
+        .btn-outline {
+            background: transparent; color: var(--accent-glow);
+            border: 1.5px solid var(--border);
+        }
+        .btn-outline:hover { background: rgba(108,99,255,0.08); border-color: var(--accent); }
+
+        /* Services */
+        .section { padding: 60px 0; }
+        .section-title {
+            font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 40px;
+        }
+        .services-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .service-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gradient-1); opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .service-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+        .service-card:hover::before { opacity: 1; }
+        .service-icon { font-size: 2rem; margin-bottom: 12px; }
+        .service-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+        .service-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+        .service-price {
+            display: inline-block; margin-top: 12px;
+            background: rgba(0,212,170,0.1); color: var(--accent-2);
+            padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+        }
+
+        /* Stats */
+        .stats {
+            display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin: 40px 0;
+        }
+        .stat { text-align: center; }
+        .stat-number {
+            font-size: 2.2rem; font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+
+        /* Tech stack */
+        .tech-pills {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+            margin-top: 24px;
+        }
+        .tech-pill {
+            background: var(--bg-card); border: 1px solid var(--border);
+            padding: 8px 16px; border-radius: 100px;
+            font-size: 13px; color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+        .tech-pill:hover { color: var(--accent-glow); border-color: var(--accent); }
+
+        /* CTA */
+        .cta-section {
+            text-align: center; padding: 60px 0 80px;
+        }
+        .cta-section h2 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+        .cta-section p { color: var(--text-secondary); margin-bottom: 24px; }
+
+        /* Footer */
+        footer {
+            text-align: center; padding: 24px 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary); font-size: 0.85rem;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 640px) {
+            .stats { gap: 24px; }
+            .hero { padding: 60px 0 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-badge">Available for hire — Fast turnaround</div>
+            <h1>AI-Powered Automation & Content Services</h1>
+            <p>I build custom automation tools, edit high-energy content, and generate qualified leads — all powered by AI systems I've built from scratch.</p>
+            <div class="hero-cta">
+                <a href="https://www.reddit.com/message/compose/?to=YOUR_REDDIT" class="btn btn-primary">💬 DM on Reddit</a>
+                <a href="mailto:mast.jarvis@gmail.com" class="btn btn-outline">📧 Email Me</a>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Projects Delivered</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">24hr</div>
+                <div class="stat-label">Avg Turnaround</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">14</div>
+                <div class="stat-label">AI Tools Built</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Satisfaction Rate</div>
+            </div>
+        </div>
+
+        <!-- Services -->
+        <section class="section">
+            <h2 class="section-title">Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🎬</div>
+                    <h3>Video Editing</h3>
+                    <p>YouTube shorts, long-form, gaming edits. Subtitles, color grading (slog3), dynamic effects, meme integration. Fast turnaround with AI-assisted workflows.</p>
+                    <span class="service-price">From $30/video</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🤖</div>
+                    <h3>AI Video Generation</h3>
+                    <p>Animated videos using Runway, Kling, Pika + AI narration. Perfect for explainers, mythology stories, product demos. Sync audio and visuals seamlessly.</p>
+                    <span class="service-price">From $25/video</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🎯</div>
+                    <h3>Lead Generation</h3>
+                    <p>Custom-built scraping tools that find qualified B2B leads with verified emails. Automated outreach with personalized AI-written messages. 50-100+ leads/week.</p>
+                    <span class="service-price">From $20/batch</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Automation & Bots</h3>
+                    <p>Custom Python automation for any workflow. Web scrapers, data pipelines, social media bots, CRM integrations. If it's repetitive, I can automate it.</p>
+                    <span class="service-price">From $50/project</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📱</div>
+                    <h3>Social Media Content</h3>
+                    <p>AI-powered content creation for Instagram, LinkedIn, Facebook, GBP. SEO-optimized captions, Canva graphics, scheduling via GoHighLevel or Buffer.</p>
+                    <span class="service-price">From $80/month</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h3>Web Dev & Tools</h3>
+                    <p>Landing pages, portfolio sites, web apps. React, Next.js, Python Flask. Quick builds with modern design. From concept to deployed in 48 hours.</p>
+                    <span class="service-price">From $100/project</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section class="section">
+            <h2 class="section-title">Tech Stack</h2>
+            <div class="tech-pills">
+                <span class="tech-pill">Python</span>
+                <span class="tech-pill">JavaScript</span>
+                <span class="tech-pill">React / Next.js</span>
+                <span class="tech-pill">DaVinci Resolve</span>
+                <span class="tech-pill">CapCut</span>
+                <span class="tech-pill">Runway ML</span>
+                <span class="tech-pill">ElevenLabs</span>
+                <span class="tech-pill">GoHighLevel</span>
+                <span class="tech-pill">Canva</span>
+                <span class="tech-pill">Web Scraping</span>
+                <span class="tech-pill">AI/LLM APIs</span>
+                <span class="tech-pill">Selenium</span>
+                <span class="tech-pill">Node.js</span>
+                <span class="tech-pill">Git/GitHub</span>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <h2>Ready to get started?</h2>
+            <p>Drop me a message and I'll respond within the hour.</p>
+            <a href="mailto:mast.jarvis@gmail.com" class="btn btn-primary">📧 Let's Talk</a>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 M4ST — Built with AI, delivered with precision.</p>
+        </div>
+    </footer>
+</body>
+</html>
