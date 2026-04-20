@@ -19,3 +19,6 @@ premium_b2b_leads.csv
 # OS
 Thumbs.db
 .DS_Store
+
+# Internal changelog
+.changelog_internal.md
