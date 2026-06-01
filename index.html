@@ -3,941 +3,661 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LeadSniper Command Deck</title>
-  <meta name="description" content="LeadSniper command deck: agent-led signal discovery, lead scoring, and review-first outreach.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a08'/%3E%3Ctext x='7' y='21' font-family='Arial' font-size='12' font-weight='800' fill='%2355e6b5'%3ELS%3C/text%3E%3C/svg%3E">
+  <title>LeadSniper</title>
+  <meta name="description" content="LeadSniper is a lead research workspace for finding, scoring, and reviewing B2B prospects.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpath d='M9 22V9h3v10h7v3H9Zm9-13h5v3h-5V9Zm0 5h5v3h-5v-3Z' fill='%23f4f1e8'/%3E%3C/svg%3E">
   <style>
     :root {
-      --bg: #090909;
-      --surface: #10100f;
-      --surface-2: #161614;
-      --surface-3: #1d1c19;
-      --line: #34322c;
-      --line-soft: #24231f;
+      --bg: #0c0c0b;
+      --panel: #151512;
+      --panel-2: #1b1a16;
+      --line: #302f29;
       --text: #f4f1e8;
       --muted: #a7a195;
-      --faint: #726d63;
-      --green: #55e6b5;
-      --cyan: #7cc7ff;
-      --amber: #ffbf47;
-      --rose: #ff7a90;
-      --violet: #b897ff;
-      --ink: #0a0a08;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+      --soft: #777064;
+      --green: #4ed09a;
+      --amber: #e9b44c;
+      --red: #e86f61;
+      --blue: #78a8ff;
+      --black: #050505;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      color-scheme: dark;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      background:
-        linear-gradient(180deg, rgba(85, 230, 181, 0.08), transparent 420px),
-        linear-gradient(90deg, rgba(255, 191, 71, 0.05), transparent 520px),
-        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.018) 1px, transparent 1px, transparent 36px),
-        var(--bg);
+      background: var(--bg);
       color: var(--text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: 0;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button {
-      font: inherit;
-    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
 
     .app {
-      display: grid;
-      grid-template-columns: 72px minmax(0, 1fr);
       min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
     }
 
-    .rail {
-      border-right: 1px solid var(--line-soft);
-      background: rgba(12, 12, 11, 0.86);
-      padding: 18px 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: #10100e;
+      padding: 20px;
       position: sticky;
       top: 0;
       height: 100vh;
     }
 
-    .logo {
-      display: grid;
-      place-items: center;
-      width: 44px;
-      height: 44px;
-      border: 1px solid rgba(85, 230, 181, 0.38);
-      border-radius: 8px;
-      background: #0e1512;
-      color: var(--green);
-      font-weight: 900;
-      box-shadow: 0 0 0 4px rgba(85, 230, 181, 0.04);
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
     }
 
-    .rail-button {
-      display: grid;
-      place-items: center;
+    .logo {
       width: 42px;
       height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--black);
+      font-weight: 900;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-title {
+      margin: 22px 0 8px;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav button,
+    .nav a {
+      min-height: 38px;
       border: 1px solid transparent;
       border-radius: 8px;
       background: transparent;
       color: var(--muted);
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
       cursor: pointer;
+      font-weight: 750;
     }
 
-    .rail-button.active,
-    .rail-button:hover {
+    .nav button.active,
+    .nav a:hover,
+    .nav button:hover {
+      color: var(--text);
       border-color: var(--line);
-      background: var(--surface-2);
-      color: var(--text);
+      background: var(--panel);
     }
 
-    .rail-spacer {
-      flex: 1;
-    }
-
-    .workspace {
-      width: min(1540px, 100%);
-      margin: 0 auto;
-      padding: 22px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .eyebrow {
-      margin: 0 0 6px;
-      color: var(--green);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(26px, 4vw, 46px);
-      line-height: 0.98;
-      max-width: 760px;
-    }
-
-    .subhead {
-      margin: 10px 0 0;
-      max-width: 760px;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.55;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      min-height: 40px;
-      padding: 0 14px;
-      border-radius: 8px;
-      border: 1px solid var(--line);
-      background: var(--surface-2);
-      color: var(--text);
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .btn.primary {
-      background: var(--green);
-      border-color: var(--green);
-      color: var(--ink);
-    }
-
-    .deck {
-      display: grid;
-      grid-template-columns: 300px minmax(0, 1fr) 360px;
-      gap: 16px;
-      align-items: start;
-    }
-
-    .panel,
-    .stat,
-    .lead,
-    .agent,
-    .timeline-row {
+    .sidebar-note {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: rgba(16, 16, 15, 0.93);
-      box-shadow: var(--shadow);
-    }
-
-    .panel {
-      padding: 16px;
-      min-width: 0;
-    }
-
-    .panel-title {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .panel-title h2,
-    .panel-title h3 {
-      margin: 0;
-      font-size: 15px;
-      letter-spacing: 0;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      min-height: 26px;
-      padding: 0 9px;
-      border-radius: 8px;
-      border: 1px solid rgba(85, 230, 181, 0.24);
-      background: rgba(85, 230, 181, 0.09);
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .agent-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .agent {
+      background: var(--panel);
       padding: 12px;
-      box-shadow: none;
-      background: var(--surface-2);
-    }
-
-    .agent-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: start;
-    }
-
-    .agent strong {
-      display: block;
-      font-size: 14px;
-    }
-
-    .agent p {
-      margin: 6px 0 0;
       color: var(--muted);
       font-size: 12px;
       line-height: 1.45;
     }
 
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 18px rgba(85, 230, 181, 0.6);
-      flex: 0 0 auto;
-      margin-top: 4px;
+    .main {
+      padding: 22px;
+      width: min(1360px, 100%);
+      margin: 0 auto;
     }
 
-    .status-dot.amber {
-      background: var(--amber);
-      box-shadow: 0 0 18px rgba(255, 191, 71, 0.42);
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
     }
 
-    .status-dot.cyan {
-      background: var(--cyan);
-      box-shadow: 0 0 18px rgba(124, 199, 255, 0.42);
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1;
     }
 
-    .status-dot.violet {
-      background: var(--violet);
-      box-shadow: 0 0 18px rgba(184, 151, 255, 0.42);
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 760px;
+      line-height: 1.55;
+      font-size: 15px;
     }
 
-    .run-card {
-      margin-top: 14px;
-      padding: 14px;
-      border: 1px solid var(--line-soft);
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 40px;
+      border: 1px solid var(--line);
       border-radius: 8px;
-      background: #070807;
-      font-family: "SFMono-Regular", Consolas, monospace;
-      color: #c7f6e5;
-      font-size: 12px;
-      line-height: 1.7;
-      overflow-wrap: anywhere;
+      background: var(--panel);
+      color: var(--text);
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
-    .stats {
+    .btn.primary {
+      background: var(--text);
+      color: #111;
+      border-color: var(--text);
+    }
+
+    .summary {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 16px;
     }
 
-    .stat {
-      padding: 15px;
-      min-height: 110px;
-      box-shadow: none;
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+      min-width: 0;
     }
 
-    .stat span {
+    .metric span {
       color: var(--muted);
       font-size: 12px;
-      font-weight: 900;
       text-transform: uppercase;
+      font-weight: 900;
     }
 
-    .stat strong {
+    .metric strong {
       display: block;
-      margin-top: 13px;
-      font-size: 30px;
+      margin-top: 12px;
+      font-size: 32px;
       line-height: 1;
     }
 
-    .stat small {
+    .metric small {
       display: block;
       margin-top: 9px;
-      color: var(--faint);
+      color: var(--soft);
     }
 
-    .main-grid {
+    .workspace {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(290px, 0.75fr);
+      grid-template-columns: minmax(0, 1fr) 340px;
       gap: 16px;
     }
 
-    .tabs {
+    .panel-head {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 14px;
     }
 
-    .tab {
-      min-height: 34px;
-      padding: 0 11px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      font-weight: 800;
-      font-size: 13px;
-    }
-
-    .tab.active {
-      color: var(--ink);
-      border-color: var(--amber);
-      background: var(--amber);
-    }
-
-    .lead-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .lead {
-      display: grid;
-      grid-template-columns: minmax(150px, 1.15fr) 76px 90px minmax(180px, 1fr);
-      gap: 12px;
-      align-items: center;
-      padding: 12px;
-      box-shadow: none;
-      background: #121210;
-    }
-
-    .lead[hidden] {
-      display: none;
-    }
-
-    .lead strong {
-      display: block;
-      overflow-wrap: anywhere;
-    }
-
-    .lead small {
-      display: block;
-      color: var(--muted);
-      margin-top: 4px;
-      overflow-wrap: anywhere;
-    }
-
-    .score {
-      display: grid;
-      place-items: center;
-      width: 58px;
-      height: 40px;
-      border-radius: 8px;
-      background: rgba(85, 230, 181, 0.11);
-      color: var(--green);
-      font-size: 18px;
-      font-weight: 950;
-      border: 1px solid rgba(85, 230, 181, 0.2);
-    }
-
-    .stage {
-      color: var(--amber);
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .lead p {
+    .panel-head h2 {
       margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.42;
+      font-size: 17px;
     }
 
-    .pipeline {
-      display: grid;
-      gap: 12px;
-    }
-
-    .lane {
-      border: 1px solid var(--line-soft);
-      border-radius: 8px;
-      background: var(--surface-2);
-      padding: 12px;
-    }
-
-    .lane-head {
+    .search {
       display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .mini-card {
-      padding: 11px;
-      border-radius: 8px;
-      background: #0c0c0b;
-      border: 1px solid var(--line-soft);
-      color: var(--text);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .mini-card + .mini-card {
-      margin-top: 8px;
-    }
-
-    .bars {
-      display: grid;
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    .bar-row {
-      display: grid;
-      grid-template-columns: 92px minmax(0, 1fr) 42px;
-      align-items: center;
       gap: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
+      margin-bottom: 12px;
     }
 
-    .track {
-      height: 10px;
-      border-radius: 999px;
-      background: #080807;
-      border: 1px solid var(--line-soft);
-      overflow: hidden;
-    }
-
-    .fill {
-      width: var(--w);
-      height: 100%;
-      background: var(--c);
-    }
-
-    .copilot {
-      display: grid;
-      gap: 14px;
-    }
-
-    .chat-box {
-      border: 1px solid var(--line-soft);
-      background: #0b0b0a;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .chat-head {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px;
-      border-bottom: 1px solid var(--line-soft);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .message {
-      padding: 13px;
-      border-bottom: 1px solid var(--line-soft);
-      font-size: 13px;
-      line-height: 1.48;
-    }
-
-    .message:last-child {
-      border-bottom: 0;
-    }
-
-    .message.agent-msg {
-      color: var(--text);
-      background: rgba(124, 199, 255, 0.06);
-    }
-
-    .message.user-msg {
-      color: var(--muted);
-    }
-
-    .composer {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .composer input {
-      min-width: 0;
+    .search input {
       flex: 1;
+      min-width: 0;
       height: 40px;
-      border-radius: 8px;
       border: 1px solid var(--line);
-      background: #0b0b0a;
+      border-radius: 8px;
+      background: #0d0d0b;
       color: var(--text);
       padding: 0 12px;
       outline: none;
     }
 
-    .timeline {
-      display: grid;
-      gap: 9px;
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
-    .timeline-row {
-      display: grid;
-      grid-template-columns: 34px minmax(0, 1fr);
-      gap: 10px;
-      padding: 11px;
-      box-shadow: none;
-      background: var(--surface-2);
+    .chip {
+      min-height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      padding: 0 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
     }
 
-    .timeline-row b {
+    .chip.active {
+      background: var(--panel-2);
+      color: var(--text);
+    }
+
+    .table {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: minmax(170px, 1.25fr) 86px 110px minmax(180px, 1fr) 100px;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #11110f;
+    }
+
+    .row:last-child { border-bottom: 0; }
+    .row[hidden] { display: none; }
+
+    .row.header {
+      background: var(--panel-2);
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .company strong {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .company small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .score {
+      width: 54px;
+      height: 36px;
       display: grid;
       place-items: center;
-      width: 30px;
-      height: 30px;
       border-radius: 8px;
-      background: #0b0b0a;
-      border: 1px solid var(--line-soft);
-      color: var(--cyan);
+      border: 1px solid rgba(78, 208, 154, 0.28);
+      color: var(--green);
+      background: rgba(78, 208, 154, 0.08);
+      font-weight: 950;
+    }
+
+    .status {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .status.hot { color: var(--green); }
+    .status.review { color: var(--amber); }
+    .status.hold { color: var(--red); }
+
+    .reason {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .side-stack {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #11110f;
+    }
+
+    .step b {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: var(--blue);
       font-size: 12px;
     }
 
-    .timeline-row strong {
+    .step strong {
       display: block;
       font-size: 13px;
     }
 
-    .timeline-row span {
+    .step span {
       display: block;
+      margin-top: 3px;
       color: var(--muted);
       font-size: 12px;
-      line-height: 1.42;
-      margin-top: 2px;
+      line-height: 1.4;
     }
 
-    .risk {
-      border: 1px solid rgba(255, 191, 71, 0.25);
-      background: rgba(255, 191, 71, 0.07);
-      color: #ffe2a1;
-      padding: 12px;
+    .export-box {
+      border: 1px solid var(--line);
       border-radius: 8px;
+      background: #0b0b0a;
+      padding: 12px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      color: #d9d1c2;
+      font-size: 12px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .warning {
+      border-color: rgba(233, 180, 76, 0.32);
+      background: rgba(233, 180, 76, 0.07);
+      color: #edd197;
       font-size: 12px;
       line-height: 1.5;
     }
 
-    @media (max-width: 1240px) {
-      .deck {
-        grid-template-columns: 280px minmax(0, 1fr);
-      }
-
-      .copilot {
-        grid-column: 1 / -1;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      }
-
-      .copilot > .panel {
-        min-height: 100%;
-      }
-    }
-
-    @media (max-width: 980px) {
+    @media (max-width: 1120px) {
       .app {
         grid-template-columns: 1fr;
       }
 
-      .rail {
+      .sidebar {
         position: static;
-        width: 100%;
         height: auto;
-        flex-direction: row;
-        justify-content: flex-start;
-        overflow-x: auto;
+        display: block;
       }
 
-      .rail-spacer {
-        display: none;
+      .sidebar-note {
+        position: static;
+        margin-top: 18px;
       }
 
-      .topbar,
-      .main-grid,
-      .deck,
-      .copilot {
+      .workspace {
         grid-template-columns: 1fr;
-      }
-
-      .deck > section {
-        order: 1;
-      }
-
-      .copilot {
-        order: 2;
-      }
-
-      .deck > aside.panel {
-        order: 3;
-      }
-
-      .topbar {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .top-actions {
-        justify-content: flex-start;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
-    @media (max-width: 680px) {
-      .workspace {
+    @media (max-width: 820px) {
+      .main {
         padding: 14px;
       }
 
-      .stats,
-      .lead,
-      .composer {
-        grid-template-columns: 1fr;
+      .topbar {
+        flex-direction: column;
       }
 
-      .lead {
-        align-items: start;
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .row.header {
+        display: none;
       }
 
       .score {
         width: 100%;
       }
+    }
 
-      .bar-row {
-        grid-template-columns: 78px minmax(0, 1fr) 36px;
+    @media (max-width: 520px) {
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .search {
+        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <nav class="rail" aria-label="LeadSniper navigation">
-      <a class="logo" href="#" aria-label="LeadSniper home">LS</a>
-      <button class="rail-button active" type="button" title="Command">C</button>
-      <button class="rail-button" type="button" title="Agents">A</button>
-      <button class="rail-button" type="button" title="Signals">S</button>
-      <button class="rail-button" type="button" title="Review">R</button>
-      <div class="rail-spacer"></div>
-      <a class="rail-button" href="README.md" title="Docs">D</a>
-    </nav>
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">LS</div>
+        <div>
+          <strong>LeadSniper</strong>
+          <span>lead research workspace</span>
+        </div>
+      </div>
 
-    <main class="workspace">
+      <p class="nav-title">Menu</p>
+      <nav class="nav" aria-label="LeadSniper sections">
+        <button class="active" type="button">Dashboard</button>
+        <button type="button">Leads</button>
+        <button type="button">Sources</button>
+        <button type="button">Exports</button>
+        <a href="README.md">Docs</a>
+      </nav>
+
+      <p class="nav-title">Batch</p>
+      <nav class="nav" aria-label="Batch filters">
+        <button class="active" type="button">Today</button>
+        <button type="button">This week</button>
+        <button type="button">Needs review</button>
+      </nav>
+
+      <div class="sidebar-note">
+        Local demo UI. It shows sample leads and workflow states only. No messages are sent from this page.
+      </div>
+    </aside>
+
+    <main class="main">
       <header class="topbar">
         <div>
-          <p class="eyebrow">signal-led outbound cockpit</p>
-          <h1>LeadSniper turns public intent into review-ready pipeline.</h1>
-          <p class="subhead">
-            Built like an AI agency: specialist agents discover signals, score fit, draft context-aware outreach,
-            and stop at a human approval gate before anything leaves the machine.
+          <h1>Find, score, and review B2B leads.</h1>
+          <p class="subtitle">
+            A clean workspace for collecting public lead signals, ranking prospects, checking context,
+            and exporting a reviewed list for outreach.
           </p>
         </div>
-        <div class="top-actions">
-          <a class="btn" href="gig3_deliverable_sample.json">Open Sample</a>
-          <a class="btn" href="portfolio.html">Service Page</a>
-          <a class="btn primary" href="https://github.com/m4stanuj/LeadSniper">Repository</a>
+        <div class="actions">
+          <a class="btn" href="gig3_deliverable_sample.json">Sample JSON</a>
+          <a class="btn" href="portfolio.html">Old page</a>
+          <a class="btn primary" href="https://github.com/m4stanuj/LeadSniper">GitHub</a>
         </div>
       </header>
 
-      <section class="deck">
-        <aside class="panel">
-          <div class="panel-title">
-            <h2>Agent Bench</h2>
-            <span class="pill">4 active</span>
+      <section class="summary" aria-label="Batch summary">
+        <div class="card metric">
+          <span>Collected</span>
+          <strong>184</strong>
+          <small>sample prospects</small>
+        </div>
+        <div class="card metric">
+          <span>Qualified</span>
+          <strong>37</strong>
+          <small>above score threshold</small>
+        </div>
+        <div class="card metric">
+          <span>Review</span>
+          <strong>12</strong>
+          <small>need manual check</small>
+        </div>
+        <div class="card metric">
+          <span>Export</span>
+          <strong>0</strong>
+          <small>not sent, not uploaded</small>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="card">
+          <div class="panel-head">
+            <h2>Lead queue</h2>
+            <span class="muted" id="visible-count">4 visible</span>
           </div>
-          <div class="agent-list">
-            <article class="agent">
-              <div class="agent-head">
-                <strong>Signal Scout</strong>
-                <span class="status-dot"></span>
+
+          <div class="search">
+            <input id="search" aria-label="Search leads" placeholder="Search company, source, or reason">
+            <button class="btn" type="button" id="clear-search">Clear</button>
+          </div>
+
+          <div class="filters" aria-label="Lead filters">
+            <button class="chip active" type="button" data-filter="all">All</button>
+            <button class="chip" type="button" data-filter="hot">Hot</button>
+            <button class="chip" type="button" data-filter="review">Review</button>
+            <button class="chip" type="button" data-filter="github">GitHub</button>
+          </div>
+
+          <div class="table">
+            <div class="row header">
+              <span>Company</span>
+              <span>Score</span>
+              <span>Status</span>
+              <span>Reason</span>
+              <span>Action</span>
+            </div>
+
+            <article class="row lead" data-tags="hot github" data-search="workflow studio github mcp routing cleanup">
+              <div class="company">
+                <strong>Workflow studio</strong>
+                <small>github.com/org/ops-workbench</small>
               </div>
-              <p>Monitors public repo activity, hiring signals, and project language for buying intent.</p>
+              <span class="score">94</span>
+              <span class="status hot">hot</span>
+              <p class="reason">Recent public repo work mentions MCP migration and routing cleanup.</p>
+              <button class="btn" type="button">Review</button>
             </article>
-            <article class="agent">
-              <div class="agent-head">
-                <strong>ICP Analyst</strong>
-                <span class="status-dot cyan"></span>
+
+            <article class="row lead" data-tags="review github" data-search="indie saas founder billing tools scraping enrichment crm">
+              <div class="company">
+                <strong>Indie SaaS founder</strong>
+                <small>github.com/user/billing-tools</small>
               </div>
-              <p>Compares each account against fit, timing, urgency, and disqualifier rules.</p>
+              <span class="score">83</span>
+              <span class="status review">review</span>
+              <p class="reason">Issue asks for scraping, enrichment, and CRM handoff.</p>
+              <button class="btn" type="button">Review</button>
             </article>
-            <article class="agent">
-              <div class="agent-head">
-                <strong>Sequence Architect</strong>
-                <span class="status-dot violet"></span>
+
+            <article class="row lead" data-tags="hot review" data-search="recruiting automation team hiring outbound ops python pipelines">
+              <div class="company">
+                <strong>Recruiting automation team</strong>
+                <small>job board + public project signal</small>
               </div>
-              <p>Builds low-volume, signal-based outreach drafts instead of generic blasts.</p>
+              <span class="score">78</span>
+              <span class="status hot">hot</span>
+              <p class="reason">Hiring outbound ops while maintaining Python data tools.</p>
+              <button class="btn" type="button">Review</button>
             </article>
-            <article class="agent">
-              <div class="agent-head">
-                <strong>Compliance Gate</strong>
-                <span class="status-dot amber"></span>
+
+            <article class="row lead" data-tags="github" data-search="open source maintainer data harvester enrichment todos">
+              <div class="company">
+                <strong>Open-source maintainer</strong>
+                <small>github.com/user/data-harvester</small>
               </div>
-              <p>Flags sensitive cases and keeps sending disabled until a human reviews the lead.</p>
+              <span class="score">72</span>
+              <span class="status review">review</span>
+              <p class="reason">Maintains scraping utilities and added enrichment TODOs.</p>
+              <button class="btn" type="button">Review</button>
             </article>
           </div>
+        </div>
 
-          <div class="run-card" aria-label="Local command preview">
-            <div>$ python leadsniper_fast.py --mode review</div>
-            <div>source: github public events</div>
-            <div>agents: scout, icp, sequence, gate</div>
-            <div>output: review_queue.json</div>
-            <div>send: disabled</div>
-          </div>
-        </aside>
-
-        <section>
-          <div class="stats">
-            <div class="stat">
-              <span>Signal velocity</span>
-              <strong>12.5k</strong>
-              <small>events / hour scan target</small>
+        <aside class="side-stack">
+          <section class="card">
+            <div class="panel-head">
+              <h2>Workflow</h2>
             </div>
-            <div class="stat">
-              <span>Qualified batch</span>
-              <strong>184</strong>
-              <small>sample accounts above threshold</small>
+            <div class="steps">
+              <div class="step">
+                <b>1</b>
+                <div><strong>Collect</strong><span>Pull public source data into a local batch.</span></div>
+              </div>
+              <div class="step">
+                <b>2</b>
+                <div><strong>Score</strong><span>Rank leads by fit, recency, and evidence strength.</span></div>
+              </div>
+              <div class="step">
+                <b>3</b>
+                <div><strong>Review</strong><span>Check the reason before exporting any contact list.</span></div>
+              </div>
+              <div class="step">
+                <b>4</b>
+                <div><strong>Export</strong><span>Save reviewed rows as JSON or CSV.</span></div>
+              </div>
             </div>
-            <div class="stat">
-              <span>Review SLA</span>
-              <strong>30m</strong>
-              <small>speed-to-signal target</small>
-            </div>
-            <div class="stat">
-              <span>Auto-send</span>
-              <strong>Off</strong>
-              <small>approval required by design</small>
-            </div>
-          </div>
-
-          <div class="main-grid">
-            <section class="panel">
-              <div class="panel-title">
-                <h2>Intent Feed</h2>
-                <span class="pill" id="visible-count">4 visible</span>
-              </div>
-              <div class="tabs" aria-label="Lead filters">
-                <button class="tab active" type="button" data-filter="all">All</button>
-                <button class="tab" type="button" data-filter="hot">Hot</button>
-                <button class="tab" type="button" data-filter="github">GitHub</button>
-                <button class="tab" type="button" data-filter="review">Needs review</button>
-              </div>
-
-              <div class="lead-list" id="lead-list">
-                <article class="lead" data-tags="hot github">
-                  <div>
-                    <strong>AI workflow studio</strong>
-                    <small>github.com/org/agent-workbench</small>
-                  </div>
-                  <span class="score">94</span>
-                  <span class="stage">hot</span>
-                  <p>Recent commits mention MCP migration, model routing, and agent handoff cleanup.</p>
-                </article>
-                <article class="lead" data-tags="github review">
-                  <div>
-                    <strong>Indie SaaS founder</strong>
-                    <small>github.com/user/billing-agent</small>
-                  </div>
-                  <span class="score">83</span>
-                  <span class="stage">review</span>
-                  <p>Public issue requests scraping, enrichment, CRM handoff, and draft personalization.</p>
-                </article>
-                <article class="lead" data-tags="hot review">
-                  <div>
-                    <strong>Recruiting automation team</strong>
-                    <small>job board + repository signal</small>
-                  </div>
-                  <span class="score">78</span>
-                  <span class="stage">hot</span>
-                  <p>Hiring outbound ops while maintaining custom Python data pipelines.</p>
-                </article>
-                <article class="lead" data-tags="github">
-                  <div>
-                    <strong>Open-source maintainer</strong>
-                    <small>github.com/user/data-harvester</small>
-                  </div>
-                  <span class="score">72</span>
-                  <span class="stage">warm</span>
-                  <p>Maintains scraping utilities and recently added lead enrichment TODOs.</p>
-                </article>
-              </div>
-            </section>
-
-            <aside class="panel">
-              <div class="panel-title">
-                <h3>Pipeline Board</h3>
-                <span class="pill">human loop</span>
-              </div>
-              <div class="pipeline">
-                <div class="lane">
-                  <div class="lane-head"><span>discovered</span><span>31</span></div>
-                  <div class="mini-card">Repo activity matched outbound automation keywords.</div>
-                </div>
-                <div class="lane">
-                  <div class="lane-head"><span>scored</span><span>18</span></div>
-                  <div class="mini-card">Intent score above 70, disqualifiers not triggered.</div>
-                </div>
-                <div class="lane">
-                  <div class="lane-head"><span>drafted</span><span>9</span></div>
-                  <div class="mini-card">Context-aware first touch generated for review.</div>
-                </div>
-                <div class="lane">
-                  <div class="lane-head"><span>approved</span><span>0</span></div>
-                  <div class="mini-card">No outbound is sent from this static demo.</div>
-                </div>
-              </div>
-
-              <div class="bars" aria-label="Signal confidence">
-                <div class="bar-row">
-                  <span>Fit</span>
-                  <div class="track"><div class="fill" style="--w: 88%; --c: var(--green);"></div></div>
-                  <span>88</span>
-                </div>
-                <div class="bar-row">
-                  <span>Timing</span>
-                  <div class="track"><div class="fill" style="--w: 76%; --c: var(--cyan);"></div></div>
-                  <span>76</span>
-                </div>
-                <div class="bar-row">
-                  <span>Proof</span>
-                  <div class="track"><div class="fill" style="--w: 69%; --c: var(--violet);"></div></div>
-                  <span>69</span>
-                </div>
-                <div class="bar-row">
-                  <span>Risk</span>
-                  <div class="track"><div class="fill" style="--w: 22%; --c: var(--rose);"></div></div>
-                  <span>22</span>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </section>
-
-        <aside class="copilot">
-          <section class="panel">
-            <div class="panel-title">
-              <h2>Copilot Console</h2>
-              <span class="pill">shared state</span>
-            </div>
-            <div class="chat-box">
-              <div class="chat-head">
-                <span>lead context</span>
-                <span>thread ls-184</span>
-              </div>
-              <div class="message user-msg">Review the AI workflow studio lead. Why is it hot?</div>
-              <div class="message agent-msg">
-                Three signals line up: agent tooling commits, MCP migration language, and repeated routing pain.
-                Recommended next step is a short value-first opener, not a product pitch.
-              </div>
-              <div class="message user-msg">Can this be sent automatically?</div>
-              <div class="message agent-msg">No. Compliance Gate requires human approval and opt-out checks first.</div>
-            </div>
-            <form class="composer" id="composer">
-              <input aria-label="Ask LeadSniper" placeholder="Ask about a lead, signal, or draft..." autocomplete="off">
-              <button class="btn primary" type="submit">Ask</button>
-            </form>
           </section>
 
-          <section class="panel">
-            <div class="panel-title">
-              <h3>Workflow Trace</h3>
-              <span class="pill">AG-UI style</span>
+          <section class="card">
+            <div class="panel-head">
+              <h2>Local run</h2>
             </div>
-            <div class="timeline">
-              <div class="timeline-row">
-                <b>01</b>
-                <div><strong>Signal captured</strong><span>Public commit message references agent routing bottleneck.</span></div>
-              </div>
-              <div class="timeline-row">
-                <b>02</b>
-                <div><strong>State updated</strong><span>Lead score moved from 63 to 94 after ICP match.</span></div>
-              </div>
-              <div class="timeline-row">
-                <b>03</b>
-                <div><strong>Draft rendered</strong><span>Outreach copy generated as reviewable UI, not a hidden send action.</span></div>
-              </div>
+            <div class="export-box">
+              <div>$ python leadsniper_fast.py</div>
+              <div>input: public sources</div>
+              <div>output: leads.json</div>
+              <div>mode: review-only</div>
             </div>
-            <p class="risk">
-              Guardrail: LeadSniper should surface evidence and drafts. Sending emails, scraping private data, or bypassing platform controls remains outside the automated path.
-            </p>
+          </section>
+
+          <section class="card warning">
+            This dashboard is intentionally review-first. It should not send email, post messages, or upload lead data without explicit user action.
           </section>
         </aside>
       </section>
@@ -945,48 +665,43 @@
   </div>
 
   <script>
-    const tabs = document.querySelectorAll("[data-filter]");
-    const leads = document.querySelectorAll(".lead");
+    const chips = document.querySelectorAll("[data-filter]");
+    const leads = [...document.querySelectorAll(".lead")];
     const visibleCount = document.querySelector("#visible-count");
-    const composer = document.querySelector("#composer");
+    const search = document.querySelector("#search");
+    const clear = document.querySelector("#clear-search");
+    let activeFilter = "all";
 
-    function applyFilter(filter) {
+    function updateRows() {
+      const query = search.value.trim().toLowerCase();
       let visible = 0;
+
       leads.forEach((lead) => {
         const tags = lead.dataset.tags.split(" ");
-        const show = filter === "all" || tags.includes(filter);
+        const matchesFilter = activeFilter === "all" || tags.includes(activeFilter);
+        const matchesSearch = !query || lead.dataset.search.includes(query);
+        const show = matchesFilter && matchesSearch;
         lead.hidden = !show;
         if (show) visible += 1;
       });
+
       visibleCount.textContent = `${visible} visible`;
     }
 
-    tabs.forEach((tab) => {
-      tab.addEventListener("click", () => {
-        tabs.forEach((item) => item.classList.remove("active"));
-        tab.classList.add("active");
-        applyFilter(tab.dataset.filter);
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        chips.forEach((item) => item.classList.remove("active"));
+        chip.classList.add("active");
+        activeFilter = chip.dataset.filter;
+        updateRows();
       });
     });
 
-    composer.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const input = composer.querySelector("input");
-      const text = input.value.trim();
-      if (!text) return;
-
-      const box = document.querySelector(".chat-box");
-      const userMessage = document.createElement("div");
-      userMessage.className = "message user-msg";
-      userMessage.textContent = text;
-      box.appendChild(userMessage);
-
-      const reply = document.createElement("div");
-      reply.className = "message agent-msg";
-      reply.textContent = "Static demo response: connect this panel to the Python queue or a CopilotKit runtime when backend approval flow is ready.";
-      box.appendChild(reply);
-
-      input.value = "";
+    search.addEventListener("input", updateRows);
+    clear.addEventListener("click", () => {
+      search.value = "";
+      search.focus();
+      updateRows();
     });
   </script>
 </body>
