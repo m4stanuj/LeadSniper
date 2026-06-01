@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeadSniper Dashboard</title>
+  <meta name="description" content="LeadSniper is a local-first B2B intent dashboard for scoring public developer signals and preparing reviewable outreach.">
+  <style>
+    :root {
+      --bg: #080b0f;
+      --panel: #10161d;
+      --panel-2: #141c25;
+      --line: #25313d;
+      --text: #eef4f8;
+      --muted: #93a4b3;
+      --green: #31d0aa;
+      --blue: #72a7ff;
+      --amber: #f5b84b;
+      --red: #ff6b6b;
+      --ink: #0b1016;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(49, 208, 170, 0.08), transparent 36rem),
+        linear-gradient(90deg, rgba(114, 167, 255, 0.06), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(49, 208, 170, 0.35);
+      border-radius: 8px;
+      color: var(--green);
+      background: #0d151b;
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      padding: 0 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--ink);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .sidebar,
+    .main-panel,
+    .metric,
+    .module,
+    .lead-row {
+      border: 1px solid var(--line);
+      background: rgba(16, 22, 29, 0.94);
+      border-radius: 8px;
+    }
+
+    .sidebar {
+      padding: 16px;
+      align-self: start;
+      position: sticky;
+      top: 20px;
+    }
+
+    .nav-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .nav button,
+    .filter button {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      padding: 0 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .nav button.active,
+    .filter button.active {
+      color: var(--text);
+      background: var(--panel-2);
+      border-color: var(--line);
+    }
+
+    .filter {
+      display: grid;
+      gap: 8px;
+    }
+
+    .main-panel {
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .headline {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+
+    .headline h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1;
+      max-width: 840px;
+    }
+
+    .headline p {
+      color: var(--muted);
+      margin: 12px 0 0;
+      max-width: 760px;
+      font-size: 15px;
+    }
+
+    .terminal {
+      width: min(390px, 100%);
+      background: #05080c;
+      border: 1px solid #27313b;
+      border-radius: 8px;
+      overflow: hidden;
+      color: #bdebdc;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+    }
+
+    .terminal div:first-child {
+      padding: 9px 12px;
+      color: var(--muted);
+      border-bottom: 1px solid #202934;
+    }
+
+    .terminal pre {
+      margin: 0;
+      padding: 12px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .metric {
+      padding: 16px;
+      min-height: 112px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 12px;
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .metric small {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+      gap: 14px;
+    }
+
+    .module {
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .module-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .module h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .badge {
+      color: var(--green);
+      background: rgba(49, 208, 170, 0.1);
+      border: 1px solid rgba(49, 208, 170, 0.22);
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .lead-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .lead-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 1.2fr) 88px 92px minmax(170px, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      background: #0d131a;
+    }
+
+    .lead-row[data-hidden="true"] { display: none; }
+
+    .lead-row strong,
+    .lead-row span,
+    .lead-row small { min-width: 0; }
+
+    .lead-row strong {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .lead-row small {
+      color: var(--muted);
+      display: block;
+      margin-top: 3px;
+    }
+
+    .score {
+      height: 38px;
+      width: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(49, 208, 170, 0.12);
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .stage {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--amber);
+    }
+
+    .reason {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .bars {
+      display: grid;
+      gap: 13px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr) 44px;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .track {
+      height: 10px;
+      border-radius: 8px;
+      background: #080c11;
+      overflow: hidden;
+      border: 1px solid #1f2933;
+    }
+
+    .fill {
+      height: 100%;
+      width: var(--w);
+      background: var(--c);
+    }
+
+    .workflow {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .step b {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: var(--blue);
+      border: 1px solid var(--line);
+    }
+
+    .step strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1080px) {
+      .layout,
+      .headline,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell { padding: 14px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .actions { justify-content: flex-start; }
+      .metrics { grid-template-columns: 1fr; }
+      .lead-row {
+        grid-template-columns: 1fr;
+      }
+      .bar-row {
+        grid-template-columns: 86px minmax(0, 1fr) 38px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">LS</div>
+        <div>
+          <h1>LeadSniper</h1>
+          <p>Local-first B2B intent engine for developer-led lead discovery.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="README.md">Docs</a>
+        <a class="btn" href="gig3_deliverable_sample.json">Sample Data</a>
+        <a class="btn primary" href="https://github.com/m4stanuj/LeadSniper">GitHub</a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <p class="nav-title">Workspace</p>
+        <nav class="nav" aria-label="Dashboard sections">
+          <button class="active" type="button">Intent Feed</button>
+          <button type="button">Pipeline</button>
+          <button type="button">Outreach Queue</button>
+          <button type="button">Compliance</button>
+        </nav>
+
+        <p class="nav-title">Lead Filter</p>
+        <div class="filter" aria-label="Lead filters">
+          <button class="active" type="button" data-filter="all">All qualified</button>
+          <button type="button" data-filter="hot">Hot intent</button>
+          <button type="button" data-filter="github">GitHub signals</button>
+          <button type="button" data-filter="review">Needs review</button>
+        </div>
+
+        <p class="footer-note">
+          Static demo surface. Real runs stay local and require explicit review before any outreach is sent.
+        </p>
+      </aside>
+
+      <main class="main-panel">
+        <section class="headline">
+          <div>
+            <h2>Find high-intent leads before they enter a CRM.</h2>
+            <p>
+              LeadSniper watches public developer activity, extracts contact signals, scores buying intent,
+              and prepares human-reviewable outreach drafts without paid SaaS lock-in.
+            </p>
+          </div>
+          <div class="terminal" aria-label="LeadSniper run preview">
+            <div>local run</div>
+            <pre>$ python leadsniper_fast.py
+scan: github events
+score: repo + commit context
+queue: 18 review-ready leads
+mode: no auto-send</pre>
+          </div>
+        </section>
+
+        <section class="metrics" aria-label="LeadSniper metrics">
+          <div class="metric">
+            <span>Signals scanned</span>
+            <strong>12.5k</strong>
+            <small>Per hour target</small>
+          </div>
+          <div class="metric">
+            <span>Qualified leads</span>
+            <strong>184</strong>
+            <small>Sample batch</small>
+          </div>
+          <div class="metric">
+            <span>Avg intent</span>
+            <strong>82</strong>
+            <small>Review threshold: 70</small>
+          </div>
+          <div class="metric">
+            <span>Cloud cost</span>
+            <strong>$0</strong>
+            <small>Local-first workflow</small>
+          </div>
+        </section>
+
+        <section class="grid">
+          <div class="module">
+            <div class="module-head">
+              <h3>Qualified Lead Feed</h3>
+              <span class="badge" id="visible-count">4 visible</span>
+            </div>
+            <div class="lead-list" id="lead-list">
+              <article class="lead-row" data-tags="hot github">
+                <div>
+                  <strong>AI workflow studio</strong>
+                  <small>github.com/org/agent-workbench</small>
+                </div>
+                <span class="score">94</span>
+                <span class="stage">Hot</span>
+                <p class="reason">Recent commits mention MCP server migration and model routing cleanup.</p>
+              </article>
+              <article class="lead-row" data-tags="github review">
+                <div>
+                  <strong>Indie SaaS founder</strong>
+                  <small>github.com/user/billing-agent</small>
+                </div>
+                <span class="score">83</span>
+                <span class="stage">Review</span>
+                <p class="reason">Public issue asks for scraping, enrichment, and CRM handoff automation.</p>
+              </article>
+              <article class="lead-row" data-tags="hot review">
+                <div>
+                  <strong>Recruiting automation team</strong>
+                  <small>job board + repository signal</small>
+                </div>
+                <span class="score">78</span>
+                <span class="stage">Hot</span>
+                <p class="reason">Hiring for outbound ops while maintaining custom Python data pipelines.</p>
+              </article>
+              <article class="lead-row" data-tags="github">
+                <div>
+                  <strong>Open-source maintainer</strong>
+                  <small>github.com/user/data-harvester</small>
+                </div>
+                <span class="score">72</span>
+                <span class="stage">Warm</span>
+                <p class="reason">Maintains scraping utilities and recently added lead enrichment TODOs.</p>
+              </article>
+            </div>
+          </div>
+
+          <aside class="module">
+            <div class="module-head">
+              <h3>Signal Mix</h3>
+              <span class="badge">Live model</span>
+            </div>
+            <div class="bars" aria-label="Signal mix chart">
+              <div class="bar-row">
+                <span>GitHub</span>
+                <div class="track"><div class="fill" style="--w: 86%; --c: var(--green);"></div></div>
+                <span>86%</span>
+              </div>
+              <div class="bar-row">
+                <span>Job posts</span>
+                <div class="track"><div class="fill" style="--w: 64%; --c: var(--blue);"></div></div>
+                <span>64%</span>
+              </div>
+              <div class="bar-row">
+                <span>Web pages</span>
+                <div class="track"><div class="fill" style="--w: 52%; --c: var(--amber);"></div></div>
+                <span>52%</span>
+              </div>
+              <div class="bar-row">
+                <span>Cold risk</span>
+                <div class="track"><div class="fill" style="--w: 18%; --c: var(--red);"></div></div>
+                <span>18%</span>
+              </div>
+            </div>
+
+            <div class="workflow">
+              <div class="step">
+                <b>1</b>
+                <div><strong>Scan</strong>Collect public intent signals from allowed sources.</div>
+              </div>
+              <div class="step">
+                <b>2</b>
+                <div><strong>Score</strong>Rank leads by urgency, fit, and outreach risk.</div>
+              </div>
+              <div class="step">
+                <b>3</b>
+                <div><strong>Review</strong>Generate drafts, keep human approval before send.</div>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const filterButtons = document.querySelectorAll("[data-filter]");
+    const rows = document.querySelectorAll(".lead-row");
+    const count = document.querySelector("#visible-count");
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        filterButtons.forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+
+        const filter = button.dataset.filter;
+        let visible = 0;
+
+        rows.forEach((row) => {
+          const tags = row.dataset.tags.split(" ");
+          const show = filter === "all" || tags.includes(filter);
+          row.dataset.hidden = show ? "false" : "true";
+          if (show) visible += 1;
+        });
+
+        count.textContent = `${visible} visible`;
+      });
+    });
+  </script>
+</body>
+</html>

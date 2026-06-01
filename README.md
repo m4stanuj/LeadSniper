@@ -7,6 +7,8 @@
 
 **LeadSniper** is an enterprise-grade autonomous intelligence engine designed to replicate a multi-million dollar B2B outreach department at zero cost. It eliminates human intervention by orchestrating a mesh of LLM-powered agents that scrape, score, and initiate high-intent comms.
 
+> Dashboard demo: open [`index.html`](index.html) for a static LeadSniper product dashboard with sample intent feed, signal mix, and review-first outreach flow.
+
 ---
 
 ## 🚀 Core Capabilities
