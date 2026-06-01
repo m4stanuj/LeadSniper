@@ -4,22 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LeadSniper</title>
-  <meta name="description" content="LeadSniper is a lead research workspace for finding, scoring, and reviewing B2B prospects.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpath d='M9 22V9h3v10h7v3H9Zm9-13h5v3h-5V9Zm0 5h5v3h-5v-3Z' fill='%23f4f1e8'/%3E%3C/svg%3E">
+  <meta name="description" content="LeadSniper is a local lead research workspace.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Ctext x='7' y='21' font-family='Arial' font-size='12' font-weight='800' fill='%23f4f1e8'%3ELS%3C/text%3E%3C/svg%3E">
   <style>
     :root {
-      --bg: #0c0c0b;
+      --bg: #0b0b0a;
       --panel: #151512;
-      --panel-2: #1b1a16;
-      --line: #302f29;
+      --panel-2: #1d1c18;
+      --line: #312f29;
       --text: #f4f1e8;
-      --muted: #a7a195;
-      --soft: #777064;
-      --green: #4ed09a;
+      --muted: #aaa397;
+      --soft: #787165;
+      --green: #4dcc95;
       --amber: #e9b44c;
-      --red: #e86f61;
+      --red: #e66f61;
       --blue: #78a8ff;
-      --black: #050505;
     }
 
     * { box-sizing: border-box; }
@@ -33,19 +32,19 @@
       letter-spacing: 0;
     }
 
-    a { color: inherit; text-decoration: none; }
     button, input { font: inherit; }
+    a { color: inherit; text-decoration: none; }
 
     .app {
-      min-height: 100vh;
       display: grid;
-      grid-template-columns: 260px minmax(0, 1fr);
+      grid-template-columns: 248px minmax(0, 1fr);
+      min-height: 100vh;
     }
 
     .sidebar {
-      border-right: 1px solid var(--line);
       background: #10100e;
-      padding: 20px;
+      border-right: 1px solid var(--line);
+      padding: 18px;
       position: sticky;
       top: 0;
       height: 100vh;
@@ -55,32 +54,25 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 28px;
+      margin-bottom: 26px;
     }
 
     .logo {
-      width: 42px;
-      height: 42px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
-      background: var(--black);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #080807;
       font-weight: 900;
     }
 
-    .brand strong {
-      display: block;
-      font-size: 17px;
-    }
+    .brand strong { display: block; }
+    .brand span { color: var(--muted); font-size: 12px; }
 
-    .brand span {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .nav-title {
-      margin: 22px 0 8px;
+    .label {
+      margin: 18px 0 8px;
       color: var(--soft);
       font-size: 11px;
       font-weight: 900;
@@ -103,22 +95,19 @@
       display: flex;
       align-items: center;
       cursor: pointer;
-      font-weight: 750;
+      font-weight: 800;
     }
 
     .nav button.active,
-    .nav a:hover,
-    .nav button:hover {
+    .nav button:hover,
+    .nav a:hover {
       color: var(--text);
-      border-color: var(--line);
       background: var(--panel);
+      border-color: var(--line);
     }
 
-    .sidebar-note {
-      position: absolute;
-      left: 20px;
-      right: 20px;
-      bottom: 20px;
+    .note {
+      margin-top: 18px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--panel);
@@ -128,50 +117,50 @@
       line-height: 1.45;
     }
 
-    .main {
-      padding: 22px;
-      width: min(1360px, 100%);
+    main {
+      width: min(1380px, 100%);
       margin: 0 auto;
+      padding: 22px;
     }
 
     .topbar {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
+      align-items: flex-start;
       gap: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(28px, 4vw, 44px);
+      font-size: clamp(28px, 4vw, 42px);
       line-height: 1;
     }
 
     .subtitle {
-      margin: 10px 0 0;
+      margin: 9px 0 0;
       color: var(--muted);
-      max-width: 760px;
-      line-height: 1.55;
+      max-width: 720px;
+      line-height: 1.5;
       font-size: 15px;
     }
 
     .actions {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
       justify-content: flex-end;
+      gap: 10px;
     }
 
     .btn {
-      min-height: 40px;
+      min-height: 38px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--panel);
       color: var(--text);
-      padding: 0 14px;
+      padding: 0 12px;
+      font-weight: 850;
       cursor: pointer;
-      font-weight: 800;
       white-space: nowrap;
     }
 
@@ -181,7 +170,12 @@
       border-color: var(--text);
     }
 
-    .summary {
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
@@ -196,33 +190,42 @@
       min-width: 0;
     }
 
-    .metric span {
+    .stat span {
       color: var(--muted);
       font-size: 12px;
-      text-transform: uppercase;
       font-weight: 900;
+      text-transform: uppercase;
     }
 
-    .metric strong {
+    .stat strong {
       display: block;
-      margin-top: 12px;
+      margin-top: 10px;
       font-size: 32px;
       line-height: 1;
     }
 
-    .metric small {
+    .stat small {
       display: block;
-      margin-top: 9px;
+      margin-top: 8px;
       color: var(--soft);
     }
 
-    .workspace {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 340px;
-      gap: 16px;
+    .view {
+      display: none;
     }
 
-    .panel-head {
+    .view.active {
+      display: block;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .head {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -230,21 +233,23 @@
       margin-bottom: 14px;
     }
 
-    .panel-head h2 {
+    .head h2 {
       margin: 0;
       font-size: 17px;
     }
 
-    .search {
-      display: flex;
+    .muted { color: var(--muted); }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 10px;
       margin-bottom: 12px;
     }
 
-    .search input {
-      flex: 1;
+    input {
       min-width: 0;
-      height: 40px;
+      height: 38px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #0d0d0b;
@@ -253,7 +258,7 @@
       outline: none;
     }
 
-    .filters {
+    .chips {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -269,12 +274,12 @@
       padding: 0 10px;
       cursor: pointer;
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 850;
     }
 
     .chip.active {
-      background: var(--panel-2);
       color: var(--text);
+      background: var(--panel-2);
     }
 
     .table {
@@ -285,7 +290,7 @@
 
     .row {
       display: grid;
-      grid-template-columns: minmax(170px, 1.25fr) 86px 110px minmax(180px, 1fr) 100px;
+      grid-template-columns: minmax(170px, 1.15fr) 72px 92px minmax(190px, 1fr) 170px;
       gap: 12px;
       align-items: center;
       padding: 13px 14px;
@@ -294,8 +299,6 @@
     }
 
     .row:last-child { border-bottom: 0; }
-    .row[hidden] { display: none; }
-
     .row.header {
       background: var(--panel-2);
       color: var(--soft);
@@ -317,14 +320,14 @@
     }
 
     .score {
-      width: 54px;
-      height: 36px;
+      width: 52px;
+      height: 34px;
       display: grid;
       place-items: center;
+      border: 1px solid rgba(77, 204, 149, 0.28);
       border-radius: 8px;
-      border: 1px solid rgba(78, 208, 154, 0.28);
       color: var(--green);
-      background: rgba(78, 208, 154, 0.08);
+      background: rgba(77, 204, 149, 0.08);
       font-weight: 950;
     }
 
@@ -334,143 +337,126 @@
       text-transform: uppercase;
     }
 
-    .status.hot { color: var(--green); }
-    .status.review { color: var(--amber); }
-    .status.hold { color: var(--red); }
+    .hot { color: var(--green); }
+    .review { color: var(--amber); }
+    .hold { color: var(--red); }
 
     .reason {
       margin: 0;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.4;
+      line-height: 1.38;
     }
 
-    .side-stack {
+    .row-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .detail {
       display: grid;
-      gap: 16px;
-      align-content: start;
+      gap: 12px;
+      position: sticky;
+      top: 18px;
     }
 
-    .steps {
-      display: grid;
-      gap: 10px;
+    .detail h3 {
+      margin: 0;
+      font-size: 18px;
     }
 
-    .step {
-      display: grid;
-      grid-template-columns: 30px minmax(0, 1fr);
-      gap: 10px;
-      align-items: start;
-      padding: 11px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #11110f;
-    }
-
-    .step b {
-      display: grid;
-      place-items: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: var(--panel-2);
-      color: var(--blue);
-      font-size: 12px;
-    }
-
-    .step strong {
-      display: block;
+    .detail p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
       font-size: 13px;
     }
 
-    .step span {
-      display: block;
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.4;
+    .kv {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 8px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
     }
 
-    .export-box {
+    .kv span:first-child {
+      color: var(--soft);
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .box {
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #0b0b0a;
+      background: #0d0d0b;
       padding: 12px;
-      font-family: "SFMono-Regular", Consolas, monospace;
-      color: #d9d1c2;
-      font-size: 12px;
-      line-height: 1.7;
-      overflow-wrap: anywhere;
-    }
-
-    .warning {
-      border-color: rgba(233, 180, 76, 0.32);
-      background: rgba(233, 180, 76, 0.07);
-      color: #edd197;
-      font-size: 12px;
+      color: var(--muted);
+      font-size: 13px;
       line-height: 1.5;
     }
 
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #11110f;
+      padding: 13px;
+    }
+
+    .list-item strong { display: block; }
+    .list-item span { color: var(--muted); display: block; margin-top: 5px; font-size: 13px; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      max-width: min(360px, calc(100vw - 36px));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 12px 14px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      font-size: 13px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     @media (max-width: 1120px) {
-      .app {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        position: static;
-        height: auto;
-        display: block;
-      }
-
-      .sidebar-note {
-        position: static;
-        margin-top: 18px;
-      }
-
-      .workspace {
-        grid-template-columns: 1fr;
-      }
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; }
+      .grid { grid-template-columns: 1fr; }
+      .detail { position: static; }
     }
 
     @media (max-width: 820px) {
-      .main {
-        padding: 14px;
-      }
-
-      .topbar {
-        flex-direction: column;
-      }
-
-      .actions {
-        justify-content: flex-start;
-      }
-
-      .summary {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .row {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-
-      .row.header {
-        display: none;
-      }
-
-      .score {
-        width: 100%;
-      }
+      main { padding: 14px; }
+      .topbar { flex-direction: column; }
+      .actions { justify-content: flex-start; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .toolbar { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; gap: 8px; }
+      .row.header { display: none; }
+      .score { width: 100%; }
     }
 
     @media (max-width: 520px) {
-      .summary {
-        grid-template-columns: 1fr;
-      }
-
-      .search {
-        flex-direction: column;
-      }
+      .stats { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -481,228 +467,408 @@
         <div class="logo">LS</div>
         <div>
           <strong>LeadSniper</strong>
-          <span>lead research workspace</span>
+          <span>local lead workspace</span>
         </div>
       </div>
 
-      <p class="nav-title">Menu</p>
-      <nav class="nav" aria-label="LeadSniper sections">
-        <button class="active" type="button">Dashboard</button>
-        <button type="button">Leads</button>
-        <button type="button">Sources</button>
-        <button type="button">Exports</button>
+      <p class="label">Menu</p>
+      <nav class="nav" aria-label="Sections">
+        <button class="active" type="button" data-view-button="dashboard">Dashboard</button>
+        <button type="button" data-view-button="leads">Leads</button>
+        <button type="button" data-view-button="sources">Sources</button>
+        <button type="button" data-view-button="exports">Exports</button>
         <a href="README.md">Docs</a>
       </nav>
 
-      <p class="nav-title">Batch</p>
+      <p class="label">Batch</p>
       <nav class="nav" aria-label="Batch filters">
-        <button class="active" type="button">Today</button>
-        <button type="button">This week</button>
-        <button type="button">Needs review</button>
+        <button class="active" type="button" data-batch="today">Today</button>
+        <button type="button" data-batch="week">This week</button>
+        <button type="button" data-batch="review">Needs review</button>
       </nav>
 
-      <div class="sidebar-note">
-        Local demo UI. It shows sample leads and workflow states only. No messages are sent from this page.
+      <div class="note">
+        Works as a static file. Search, filters, review, mark reviewed, and export all run in the browser.
       </div>
     </aside>
 
-    <main class="main">
+    <main>
       <header class="topbar">
         <div>
-          <h1>Find, score, and review B2B leads.</h1>
-          <p class="subtitle">
-            A clean workspace for collecting public lead signals, ranking prospects, checking context,
-            and exporting a reviewed list for outreach.
-          </p>
+          <h1 id="page-title">Find, score, and review B2B leads.</h1>
+          <p class="subtitle" id="page-subtitle">A local workspace for checking lead context before export.</p>
         </div>
         <div class="actions">
-          <a class="btn" href="gig3_deliverable_sample.json">Sample JSON</a>
-          <a class="btn" href="portfolio.html">Old page</a>
-          <a class="btn primary" href="https://github.com/m4stanuj/LeadSniper">GitHub</a>
+          <button class="btn" type="button" id="load-sample">Load sample</button>
+          <button class="btn" type="button" id="export-json">Export JSON</button>
+          <button class="btn primary" type="button" id="export-csv">Export CSV</button>
         </div>
       </header>
 
-      <section class="summary" aria-label="Batch summary">
-        <div class="card metric">
-          <span>Collected</span>
-          <strong>184</strong>
-          <small>sample prospects</small>
-        </div>
-        <div class="card metric">
-          <span>Qualified</span>
-          <strong>37</strong>
-          <small>above score threshold</small>
-        </div>
-        <div class="card metric">
-          <span>Review</span>
-          <strong>12</strong>
-          <small>need manual check</small>
-        </div>
-        <div class="card metric">
-          <span>Export</span>
-          <strong>0</strong>
-          <small>not sent, not uploaded</small>
+      <section class="view active" id="view-dashboard">
+        <section class="stats" aria-label="Summary">
+          <div class="card stat">
+            <span>Collected</span>
+            <strong id="stat-collected">0</strong>
+            <small>loaded leads</small>
+          </div>
+          <div class="card stat">
+            <span>Qualified</span>
+            <strong id="stat-qualified">0</strong>
+            <small>score 75+</small>
+          </div>
+          <div class="card stat">
+            <span>Needs review</span>
+            <strong id="stat-review">0</strong>
+            <small>not yet checked</small>
+          </div>
+          <div class="card stat">
+            <span>Reviewed</span>
+            <strong id="stat-reviewed">0</strong>
+            <small>ready for export</small>
+          </div>
+        </section>
+
+        <section class="grid">
+          <div class="card">
+            <div class="head">
+              <h2>Lead queue</h2>
+              <span class="muted" id="visible-count">0 visible</span>
+            </div>
+            <div class="toolbar">
+              <input id="search" aria-label="Search leads" placeholder="Search company, source, or reason">
+              <button class="btn" type="button" id="clear-search">Clear</button>
+            </div>
+            <div class="chips" aria-label="Lead filters">
+              <button class="chip active" type="button" data-filter="all">All</button>
+              <button class="chip" type="button" data-filter="hot">Hot</button>
+              <button class="chip" type="button" data-filter="review">Review</button>
+              <button class="chip" type="button" data-filter="reviewed">Reviewed</button>
+              <button class="chip" type="button" data-filter="github">GitHub</button>
+              <button class="chip" type="button" data-filter="reddit">Reddit</button>
+            </div>
+            <div class="table" id="lead-table"></div>
+          </div>
+
+          <aside class="detail">
+            <section class="card" id="detail-card">
+              <h3>No lead selected</h3>
+              <p>Select any lead from the table. The review panel will show score, source, reason, URL, and export state.</p>
+            </section>
+            <section class="card">
+              <div class="head"><h2>Local run</h2></div>
+              <div class="box">
+                $ python leadsniper_fast.py<br>
+                output: leads.json<br>
+                mode: review-only
+              </div>
+            </section>
+          </aside>
+        </section>
+      </section>
+
+      <section class="view" id="view-leads">
+        <div class="card">
+          <div class="head">
+            <h2>All leads</h2>
+            <span class="muted" id="all-leads-count">0 rows</span>
+          </div>
+          <div class="list" id="lead-list"></div>
         </div>
       </section>
 
-      <section class="workspace">
+      <section class="view" id="view-sources">
         <div class="card">
-          <div class="panel-head">
-            <h2>Lead queue</h2>
-            <span class="muted" id="visible-count">4 visible</span>
-          </div>
-
-          <div class="search">
-            <input id="search" aria-label="Search leads" placeholder="Search company, source, or reason">
-            <button class="btn" type="button" id="clear-search">Clear</button>
-          </div>
-
-          <div class="filters" aria-label="Lead filters">
-            <button class="chip active" type="button" data-filter="all">All</button>
-            <button class="chip" type="button" data-filter="hot">Hot</button>
-            <button class="chip" type="button" data-filter="review">Review</button>
-            <button class="chip" type="button" data-filter="github">GitHub</button>
-          </div>
-
-          <div class="table">
-            <div class="row header">
-              <span>Company</span>
-              <span>Score</span>
-              <span>Status</span>
-              <span>Reason</span>
-              <span>Action</span>
-            </div>
-
-            <article class="row lead" data-tags="hot github" data-search="workflow studio github mcp routing cleanup">
-              <div class="company">
-                <strong>Workflow studio</strong>
-                <small>github.com/org/ops-workbench</small>
-              </div>
-              <span class="score">94</span>
-              <span class="status hot">hot</span>
-              <p class="reason">Recent public repo work mentions MCP migration and routing cleanup.</p>
-              <button class="btn" type="button">Review</button>
-            </article>
-
-            <article class="row lead" data-tags="review github" data-search="indie saas founder billing tools scraping enrichment crm">
-              <div class="company">
-                <strong>Indie SaaS founder</strong>
-                <small>github.com/user/billing-tools</small>
-              </div>
-              <span class="score">83</span>
-              <span class="status review">review</span>
-              <p class="reason">Issue asks for scraping, enrichment, and CRM handoff.</p>
-              <button class="btn" type="button">Review</button>
-            </article>
-
-            <article class="row lead" data-tags="hot review" data-search="recruiting automation team hiring outbound ops python pipelines">
-              <div class="company">
-                <strong>Recruiting automation team</strong>
-                <small>job board + public project signal</small>
-              </div>
-              <span class="score">78</span>
-              <span class="status hot">hot</span>
-              <p class="reason">Hiring outbound ops while maintaining Python data tools.</p>
-              <button class="btn" type="button">Review</button>
-            </article>
-
-            <article class="row lead" data-tags="github" data-search="open source maintainer data harvester enrichment todos">
-              <div class="company">
-                <strong>Open-source maintainer</strong>
-                <small>github.com/user/data-harvester</small>
-              </div>
-              <span class="score">72</span>
-              <span class="status review">review</span>
-              <p class="reason">Maintains scraping utilities and added enrichment TODOs.</p>
-              <button class="btn" type="button">Review</button>
-            </article>
-          </div>
+          <div class="head"><h2>Sources</h2></div>
+          <div class="list" id="source-list"></div>
         </div>
+      </section>
 
-        <aside class="side-stack">
-          <section class="card">
-            <div class="panel-head">
-              <h2>Workflow</h2>
-            </div>
-            <div class="steps">
-              <div class="step">
-                <b>1</b>
-                <div><strong>Collect</strong><span>Pull public source data into a local batch.</span></div>
-              </div>
-              <div class="step">
-                <b>2</b>
-                <div><strong>Score</strong><span>Rank leads by fit, recency, and evidence strength.</span></div>
-              </div>
-              <div class="step">
-                <b>3</b>
-                <div><strong>Review</strong><span>Check the reason before exporting any contact list.</span></div>
-              </div>
-              <div class="step">
-                <b>4</b>
-                <div><strong>Export</strong><span>Save reviewed rows as JSON or CSV.</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="panel-head">
-              <h2>Local run</h2>
-            </div>
-            <div class="export-box">
-              <div>$ python leadsniper_fast.py</div>
-              <div>input: public sources</div>
-              <div>output: leads.json</div>
-              <div>mode: review-only</div>
-            </div>
-          </section>
-
-          <section class="card warning">
-            This dashboard is intentionally review-first. It should not send email, post messages, or upload lead data without explicit user action.
-          </section>
-        </aside>
+      <section class="view" id="view-exports">
+        <div class="card">
+          <div class="head">
+            <h2>Export preview</h2>
+            <span class="muted" id="export-count">0 reviewed</span>
+          </div>
+          <div class="box" id="export-preview">Mark leads as reviewed to preview export data.</div>
+        </div>
       </section>
     </main>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <script>
-    const chips = document.querySelectorAll("[data-filter]");
-    const leads = [...document.querySelectorAll(".lead")];
-    const visibleCount = document.querySelector("#visible-count");
-    const search = document.querySelector("#search");
-    const clear = document.querySelector("#clear-search");
+    const leads = [
+      {
+        id: 1,
+        name: "Workflow studio",
+        source: "GitHub",
+        sourceType: "github",
+        context: "Recent public repo work mentions MCP migration and routing cleanup.",
+        url: "https://github.com/org/ops-workbench",
+        score: 94,
+        status: "hot",
+        reviewed: false
+      },
+      {
+        id: 2,
+        name: "Indie SaaS founder",
+        source: "GitHub",
+        sourceType: "github",
+        context: "Issue asks for scraping, enrichment, and CRM handoff.",
+        url: "https://github.com/user/billing-tools",
+        score: 83,
+        status: "review",
+        reviewed: false
+      },
+      {
+        id: 3,
+        name: "Recruiting automation team",
+        source: "Job board",
+        sourceType: "web",
+        context: "Hiring outbound ops while maintaining Python data tools.",
+        url: "https://example.com/jobs/revops",
+        score: 78,
+        status: "hot",
+        reviewed: false
+      },
+      {
+        id: 4,
+        name: "Open-source maintainer",
+        source: "GitHub",
+        sourceType: "github",
+        context: "Maintains scraping utilities and added enrichment TODOs.",
+        url: "https://github.com/user/data-harvester",
+        score: 72,
+        status: "review",
+        reviewed: false
+      }
+    ];
+
     let activeFilter = "all";
+    let activeView = "dashboard";
+    let selectedId = leads[0].id;
 
-    function updateRows() {
-      const query = search.value.trim().toLowerCase();
-      let visible = 0;
+    const table = document.querySelector("#lead-table");
+    const detailCard = document.querySelector("#detail-card");
+    const search = document.querySelector("#search");
+    const visibleCount = document.querySelector("#visible-count");
+    const toast = document.querySelector("#toast");
 
-      leads.forEach((lead) => {
-        const tags = lead.dataset.tags.split(" ");
-        const matchesFilter = activeFilter === "all" || tags.includes(activeFilter);
-        const matchesSearch = !query || lead.dataset.search.includes(query);
-        const show = matchesFilter && matchesSearch;
-        lead.hidden = !show;
-        if (show) visible += 1;
-      });
-
-      visibleCount.textContent = `${visible} visible`;
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1700);
     }
 
-    chips.forEach((chip) => {
-      chip.addEventListener("click", () => {
-        chips.forEach((item) => item.classList.remove("active"));
-        chip.classList.add("active");
-        activeFilter = chip.dataset.filter;
-        updateRows();
+    function scoreStatus(score) {
+      if (score >= 85) return "hot";
+      if (score >= 70) return "review";
+      return "hold";
+    }
+
+    function filteredLeads() {
+      const query = search.value.trim().toLowerCase();
+      return leads.filter((lead) => {
+        const text = `${lead.name} ${lead.source} ${lead.context} ${lead.url}`.toLowerCase();
+        const matchesSearch = !query || text.includes(query);
+        const matchesFilter =
+          activeFilter === "all" ||
+          (activeFilter === "hot" && scoreStatus(lead.score) === "hot") ||
+          (activeFilter === "review" && !lead.reviewed) ||
+          (activeFilter === "reviewed" && lead.reviewed) ||
+          activeFilter === lead.sourceType;
+        return matchesSearch && matchesFilter;
       });
+    }
+
+    function renderStats() {
+      document.querySelector("#stat-collected").textContent = leads.length;
+      document.querySelector("#stat-qualified").textContent = leads.filter((lead) => lead.score >= 75).length;
+      document.querySelector("#stat-review").textContent = leads.filter((lead) => !lead.reviewed).length;
+      document.querySelector("#stat-reviewed").textContent = leads.filter((lead) => lead.reviewed).length;
+    }
+
+    function renderTable() {
+      const rows = filteredLeads();
+      visibleCount.textContent = `${rows.length} visible`;
+      table.innerHTML = `
+        <div class="row header">
+          <span>Company</span>
+          <span>Score</span>
+          <span>Status</span>
+          <span>Reason</span>
+          <span>Action</span>
+        </div>
+        ${rows.map((lead) => `
+          <article class="row">
+            <div class="company">
+              <strong>${lead.name}</strong>
+              <small>${lead.source}</small>
+            </div>
+            <span class="score">${lead.score}</span>
+            <span class="status ${scoreStatus(lead.score)}">${lead.reviewed ? "reviewed" : scoreStatus(lead.score)}</span>
+            <p class="reason">${lead.context}</p>
+            <div class="row-actions">
+              <button class="btn" type="button" data-open="${lead.id}">Open</button>
+              <button class="btn" type="button" data-reviewed="${lead.id}">${lead.reviewed ? "Undo" : "Done"}</button>
+            </div>
+          </article>
+        `).join("") || `<div class="row"><span class="muted">No leads match this filter.</span></div>`}
+      `;
+    }
+
+    function renderDetail() {
+      const lead = leads.find((item) => item.id === selectedId);
+      if (!lead) return;
+      detailCard.innerHTML = `
+        <h3>${lead.name}</h3>
+        <p>${lead.context}</p>
+        <div class="kv"><span>Score</span><strong>${lead.score}</strong></div>
+        <div class="kv"><span>Status</span><strong class="${scoreStatus(lead.score)}">${lead.reviewed ? "reviewed" : scoreStatus(lead.score)}</strong></div>
+        <div class="kv"><span>Source</span><strong>${lead.source}</strong></div>
+        <div class="kv"><span>URL</span><a href="${lead.url}" target="_blank" rel="noreferrer">${lead.url}</a></div>
+        <button class="btn primary" type="button" data-reviewed="${lead.id}">${lead.reviewed ? "Move back to review" : "Mark reviewed"}</button>
+      `;
+    }
+
+    function renderList() {
+      document.querySelector("#all-leads-count").textContent = `${leads.length} rows`;
+      document.querySelector("#lead-list").innerHTML = leads.map((lead) => `
+        <div class="list-item">
+          <strong>${lead.name} · ${lead.score}</strong>
+          <span>${lead.source} — ${lead.context}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderSources() {
+      const counts = leads.reduce((acc, lead) => {
+        acc[lead.source] = (acc[lead.source] || 0) + 1;
+        return acc;
+      }, {});
+      document.querySelector("#source-list").innerHTML = Object.entries(counts).map(([source, count]) => `
+        <div class="list-item">
+          <strong>${source}</strong>
+          <span>${count} lead${count === 1 ? "" : "s"} in current batch</span>
+        </div>
+      `).join("");
+    }
+
+    function exportRows() {
+      return leads.filter((lead) => lead.reviewed).map(({ id, name, source, context, url, score }) => ({
+        id, name, source, context, url, score
+      }));
+    }
+
+    function renderExports() {
+      const rows = exportRows();
+      document.querySelector("#export-count").textContent = `${rows.length} reviewed`;
+      document.querySelector("#export-preview").textContent = rows.length
+        ? JSON.stringify(rows, null, 2)
+        : "Mark leads as reviewed to preview export data.";
+    }
+
+    function render() {
+      renderStats();
+      renderTable();
+      renderDetail();
+      renderList();
+      renderSources();
+      renderExports();
+    }
+
+    function switchView(view) {
+      activeView = view;
+      document.querySelectorAll(".view").forEach((item) => item.classList.toggle("active", item.id === `view-${view}`));
+      document.querySelectorAll("[data-view-button]").forEach((button) => button.classList.toggle("active", button.dataset.viewButton === view));
+      const titles = {
+        dashboard: ["Find, score, and review B2B leads.", "A local workspace for checking lead context before export."],
+        leads: ["All leads in the current batch.", "Review the full list without filters."],
+        sources: ["Source breakdown.", "See where the current batch came from."],
+        exports: ["Export reviewed leads.", "Only reviewed rows are included in export files."]
+      };
+      document.querySelector("#page-title").textContent = titles[view][0];
+      document.querySelector("#page-subtitle").textContent = titles[view][1];
+    }
+
+    function download(filename, text, type) {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.addEventListener("click", (event) => {
+      const open = event.target.closest("[data-open]");
+      const reviewed = event.target.closest("[data-reviewed]");
+      const view = event.target.closest("[data-view-button]");
+      const filter = event.target.closest("[data-filter]");
+      const batch = event.target.closest("[data-batch]");
+
+      if (open) {
+        selectedId = Number(open.dataset.open);
+        renderDetail();
+        showToast("Lead opened");
+      }
+
+      if (reviewed) {
+        const lead = leads.find((item) => item.id === Number(reviewed.dataset.reviewed));
+        lead.reviewed = !lead.reviewed;
+        render();
+        showToast(lead.reviewed ? "Marked reviewed" : "Moved back to review");
+      }
+
+      if (view) switchView(view.dataset.viewButton);
+
+      if (filter) {
+        document.querySelectorAll("[data-filter]").forEach((item) => item.classList.remove("active"));
+        filter.classList.add("active");
+        activeFilter = filter.dataset.filter;
+        renderTable();
+      }
+
+      if (batch) {
+        document.querySelectorAll("[data-batch]").forEach((item) => item.classList.remove("active"));
+        batch.classList.add("active");
+        activeFilter = batch.dataset.batch === "review" ? "review" : "all";
+        document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("active", item.dataset.filter === activeFilter));
+        renderTable();
+        showToast(`Batch filter: ${batch.textContent}`);
+      }
     });
 
-    search.addEventListener("input", updateRows);
-    clear.addEventListener("click", () => {
+    search.addEventListener("input", renderTable);
+    document.querySelector("#clear-search").addEventListener("click", () => {
       search.value = "";
       search.focus();
-      updateRows();
+      renderTable();
     });
+
+    document.querySelector("#load-sample").addEventListener("click", () => {
+      showToast("Sample batch already loaded");
+    });
+
+    document.querySelector("#export-json").addEventListener("click", () => {
+      const rows = exportRows();
+      if (!rows.length) return showToast("Mark at least one lead reviewed first");
+      download("leadsniper-reviewed.json", JSON.stringify(rows, null, 2), "application/json");
+    });
+
+    document.querySelector("#export-csv").addEventListener("click", () => {
+      const rows = exportRows();
+      if (!rows.length) return showToast("Mark at least one lead reviewed first");
+      const headers = ["id", "name", "source", "score", "url", "context"];
+      const csv = [headers.join(",")].concat(rows.map((row) => headers.map((key) => `"${String(row[key]).replaceAll('"', '""')}"`).join(","))).join("\n");
+      download("leadsniper-reviewed.csv", csv, "text/csv");
+    });
+
+    render();
   </script>
 </body>
 </html>
