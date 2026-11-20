@@ -183,15 +183,27 @@ Anuj (M4ST Autonomous Systems)"""
             raise ValueError("maximum number of drafts must be non-negative")
 
         rows, eligible = self._read_recipients(csv_filepath)
+        unique = {}
+        for address, lead in eligible:
+            unique.setdefault(address.casefold(), (address, lead))
         drafts = []
-        for address, lead in eligible[:max_drafts]:
+        for address, lead in list(unique.values())[:max_drafts]:
             subject, body = self.generate_pitch(lead)
-            drafts.append({"email": address, "subject": subject, "body": body})
+            drafts.append({
+                "email": address,
+                "subject": subject,
+                "body": body,
+                "review_status": "pending",
+            })
 
         report = {
             "mode": "draft",
             "input_rows": rows,
             "eligible_rows": len(eligible),
+            "invalid_or_excluded_rows": rows - len(eligible),
+            "duplicate_rows": len(eligible) - len(unique),
+            "unique_recipients": len(unique),
+            "omitted_by_limit": len(unique) - len(drafts),
             "draft_count": len(drafts),
             "sent_count": 0,
             "drafts": drafts,

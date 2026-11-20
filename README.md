@@ -59,6 +59,10 @@ http://127.0.0.1:8765/index.html
 python cold_email_engine.py premium_b2b_leads.csv --max-drafts 10
 ```
 
+Each report starts drafts at `review_status: pending` and shows counts for excluded rows,
+case-insensitive duplicate addresses, and unique recipients beyond the draft limit. The first
+eligible row supplies the details for a duplicate address.
+
 The command writes a timestamped `campaign_drafts_*.json` report with recipients, subjects,
 message bodies, and counts. Each draft comes from a local template. The command
 requires no email credentials or network connection. The input CSV needs an

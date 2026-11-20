@@ -84,3 +84,27 @@ def test_default_smtp_helpers_never_use_the_transport(prevent_network):
     assert not campaign.send_email("recipient@example.invalid", "Subject", "Body")
     assert not sender.send("recipient@example.invalid", "Subject", "Body")
     transport.send_message.assert_not_called()
+
+
+def test_draft_review_report_explains_exclusions_and_keeps_first_duplicate(tmp_path, prevent_network):
+    source = tmp_path / "input.csv"
+    source.write_text(
+        "Username,Email,Company\n"
+        "Ada,ada@example.invalid,First\n"
+        "Duplicate,ADA@example.invalid,Second\n"
+        "Grace,grace@example.invalid,Third\n"
+        "Nobody,invalid,Fourth\n",
+        encoding="utf-8",
+    )
+    report_path = ColdEmailEngine().draft_campaign(source, max_drafts=1, output=tmp_path / "review.json")
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report["input_rows"] == 4
+    assert report["invalid_or_excluded_rows"] == 1
+    assert report["duplicate_rows"] == 1
+    assert report["unique_recipients"] == 2
+    assert report["omitted_by_limit"] == 1
+    assert report["sent_count"] == 0
+    assert len(report["drafts"]) == 1
+    assert report["drafts"][0]["email"] == "ada@example.invalid"
+    assert report["drafts"][0]["subject"].endswith("at First")
+    assert report["drafts"][0]["review_status"] == "pending"
