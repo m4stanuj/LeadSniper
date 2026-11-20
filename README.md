@@ -59,6 +59,8 @@ http://127.0.0.1:8765/index.html
 python cold_email_engine.py premium_b2b_leads.csv --max-drafts 10
 ```
 
+The installed package also exposes the same local draft workflow as `leadsniper-drafts`.
+
 Each report starts drafts at `review_status: pending` and shows counts for excluded rows,
 case-insensitive duplicate addresses, and unique recipients beyond the draft limit. The first
 eligible row supplies the details for a duplicate address.
