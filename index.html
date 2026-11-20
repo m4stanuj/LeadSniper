@@ -804,6 +804,14 @@
       URL.revokeObjectURL(url);
     }
 
+    function csvCell(value) {
+      const text = String(value ?? "");
+      const safeText = typeof value === "string" && /^\s*[=+\-@＝＋－＠\t\r\n]/u.test(text)
+        ? "'" + text
+        : text;
+      return '"' + safeText.replaceAll('"', '""') + '"';
+    }
+
     document.addEventListener("click", (event) => {
       const open = event.target.closest("[data-open]");
       const reviewed = event.target.closest("[data-reviewed]");
@@ -864,7 +872,10 @@
       const rows = exportRows();
       if (!rows.length) return showToast("Mark at least one lead reviewed first");
       const headers = ["id", "name", "source", "score", "url", "context"];
-      const csv = [headers.join(",")].concat(rows.map((row) => headers.map((key) => `"${String(row[key]).replaceAll('"', '""')}"`).join(","))).join("\n");
+      const csv = [
+        headers.map(csvCell).join(","),
+        ...rows.map((row) => headers.map((key) => csvCell(row[key])).join(","))
+      ].join("\r\n");
       download("leadsniper-reviewed.csv", csv, "text/csv");
     });
 

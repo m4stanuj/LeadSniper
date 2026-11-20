@@ -16,6 +16,7 @@ Dashboard demo: open [`index.html`](index.html) for a static workspace with a sa
 - Scores prospects by fit, recency, and evidence strength.
 - Supports review-first filtering before export.
 - Exports reviewed batches for downstream outreach tools.
+- Generates local email draft reports from a lead CSV for manual review.
 
 ## Architecture
 
@@ -52,12 +53,24 @@ Then open:
 http://127.0.0.1:8765/index.html
 ```
 
+## Local Outreach Drafts
+
+```bash
+python cold_email_engine.py premium_b2b_leads.csv --max-drafts 10
+```
+
+The command writes a timestamped `campaign_drafts_*.json` report with recipients, subjects,
+message bodies, and counts. Each draft comes from a local template. The command
+requires no email credentials or network connection. The input CSV needs an
+`Email` or `email` column.
+
 ## Security Notes
 
 - Keep API keys in `.env`; never commit secrets.
 - Use public or explicitly authorized data sources only.
 - Review lead context before exporting or using a list.
-- This repo should not send emails or messages without explicit user action.
+- Treat generated reports as contact data and review drafts before sharing.
+- CSV exports mark formula-like cell values as text. Use JSON when you need the original values.
 
 ## Example Batch Metrics
 

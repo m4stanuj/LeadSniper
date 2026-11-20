@@ -1,8 +1,9 @@
 import urllib.request
 import json
-import csv
+import os
 import time
-import re
+
+from spreadsheet_csv import write_spreadsheet_csv
 
 def get_email_from_events(username, headers):
     try:
@@ -94,9 +95,9 @@ if __name__ == "__main__":
     
     csv_file = "premium_b2b_leads.csv"
     with open(csv_file, mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=["Username", "Email", "Company", "Website/Blog", "GitHub URL"])
-        writer.writeheader()
-        writer.writerows(unique_leads)
+        fields = ["Username", "Email", "Company", "Website/Blog", "GitHub URL"]
+        rows = ([lead.get(field) for field in fields] for lead in unique_leads)
+        write_spreadsheet_csv(f, fields, rows)
         
     print(f"\n[*] SUCCESS! {len(unique_leads)} Premium Leads saved to {csv_file}")
     print("[*] This CSV is ready to be sold for $50-$100 on BHW or Discord.")

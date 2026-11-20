@@ -1,55 +1,44 @@
 #!/usr/bin/env python3
-"""
-cold_email_engine.py — M4ST AI Cold Outreach Engine v2.0
-=========================================================
-Sends personalized cold emails using AI-generated pitches.
-Supports M4ST LLM fallback (73 keys) or Groq SDK.
+"""Generate local outreach drafts from a lead CSV for manual review."""
 
-Features:
-  - AI-generated subject lines & body copy
-  - HTML email templates (professional look)
-  - Rate limiting (configurable delay)
-  - Send tracking & reporting
-  - CSV lead ingestion
-"""
-import csv, smtplib, time, os, sys, json
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import argparse
+import csv
+import json
+import os
+import smtplib
+import sys
+import time
 from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# ── M4ST LLM Integration ──────────────────────────────────────────────
-_M4ST_ROOT = Path(os.getenv("OPENWORK_CONFIG", ""))
-_LLM_MODULE = None
-
-if _M4ST_ROOT.exists():
-    sys.path.insert(0, str(_M4ST_ROOT / "mcp_servers"))
-    try:
-        from llm_fallback import chat_complete as m4st_chat
-        _LLM_MODULE = "m4st"
-    except ImportError:
-        pass
-
-if not _LLM_MODULE:
-    try:
-        from groq import Groq
-        _LLM_MODULE = "groq"
-    except ImportError:
-        _LLM_MODULE = None
-
 
 def ai_generate(prompt: str, max_tokens: int = 250) -> str:
     """Generate text using M4ST's 73-key pool or Groq SDK."""
-    if _LLM_MODULE == "m4st":
-        return m4st_chat(
-            [{"role": "system", "content": "You are an expert B2B cold email copywriter. Write concise, high-converting emails."},
-             {"role": "user", "content": prompt}],
-            max_tokens=max_tokens, task="write"
-        )
-    elif _LLM_MODULE == "groq":
+    llm_root = os.getenv("OPENWORK_CONFIG")
+    if llm_root and Path(llm_root).is_dir():
+        sys.path.insert(0, str(Path(llm_root) / "mcp_servers"))
+        try:
+            from llm_fallback import chat_complete as m4st_chat
+        except ImportError:
+            pass
+        else:
+            return m4st_chat(
+                [
+                    {"role": "system", "content": "Write concise B2B outreach drafts."},
+                    {"role": "user", "content": prompt},
+                ],
+                max_tokens=max_tokens,
+                task="write",
+            )
+        finally:
+            sys.path.pop(0)
+
+    if os.getenv("GROQ_API_KEY"):
+        try:
+            from groq import Groq
+        except ImportError:
+            return ""
         client = Groq(api_key=os.getenv("GROQ_API_KEY"))
         r = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -61,26 +50,23 @@ def ai_generate(prompt: str, max_tokens: int = 250) -> str:
 
 
 class ColdEmailEngine:
-    def __init__(self):
-        print("=" * 60)
-        print("   M4ST COLD OUTREACH ENGINE v2.0")
-        print("=" * 60)
-        print(f"   LLM: {_LLM_MODULE or 'template-only'}")
+    def __init__(self, *, allow_send: bool = False):
+        self._allow_send = allow_send is True
+        if self._allow_send:
+            from dotenv import load_dotenv
 
-        self.email_address = os.getenv("GMAIL_ADDRESS", "")
-        self.app_password = os.getenv("GMAIL_APP_PASSWORD", "")
+            load_dotenv()
+        self.email_address = os.getenv("GMAIL_ADDRESS", "") if self._allow_send else ""
+        self.app_password = os.getenv("GMAIL_APP_PASSWORD", "") if self._allow_send else ""
         self.server = None
         self.sent_count = 0
         self.fail_count = 0
         self.log = []
 
-        if not self.email_address or not self.app_password:
-            print("[-] CRITICAL: GMAIL_ADDRESS or GMAIL_APP_PASSWORD missing in .env")
-            print("[-] Get App Password: https://myaccount.google.com/apppasswords")
-            return
-
     def connect(self) -> bool:
         """Connect to Gmail SMTP with TLS."""
+        if not self._allow_send or not self.email_address or not self.app_password:
+            return False
         try:
             self.server = smtplib.SMTP('smtp.gmail.com', 587)
             self.server.starttls()
@@ -91,15 +77,14 @@ class ColdEmailEngine:
             print(f"[-] SMTP auth failed: {e}")
             return False
 
-    def generate_pitch(self, lead: dict) -> tuple:
+    def generate_pitch(self, lead: dict, *, use_ai: bool = False) -> tuple:
         """Generate personalized subject + body for a lead."""
         username = lead.get("Username", lead.get("username", "there"))
         company = lead.get("Company", lead.get("company", ""))
-        email = lead.get("Email", lead.get("email", ""))
         website = lead.get("Website/Blog", lead.get("website", ""))
 
         # AI-generated pitch
-        if _LLM_MODULE:
+        if self._allow_send and use_ai:
             prompt = f"""Write a cold email for B2B outreach.
 
 Target: {username}
@@ -139,7 +124,7 @@ Anuj (M4ST Autonomous Systems)"""
 
     def send_email(self, to_email: str, subject: str, body: str) -> bool:
         """Send a single email with tracking."""
-        if not self.server:
+        if not self._allow_send or not self.server:
             return False
 
         msg = MIMEMultipart('alternative')
@@ -168,34 +153,76 @@ Anuj (M4ST Autonomous Systems)"""
             self.log.append({"email": to_email, "subject": subject, "status": f"failed: {e}", "time": datetime.now().isoformat()})
             return False
 
+    @staticmethod
+    def _read_recipients(csv_filepath):
+        with open(csv_filepath, encoding="utf-8-sig", newline="") as file:
+            reader = csv.DictReader(file)
+            if not {"Email", "email"}.intersection(reader.fieldnames or ()):
+                raise ValueError("input CSV requires an Email or email column")
+            leads = list(reader)
+
+        eligible = []
+        for lead in leads:
+            address = (lead.get("Email") or lead.get("email") or "").strip()
+            local, separator, domain = address.partition("@")
+            if (
+                separator
+                and local
+                and domain
+                and "@" not in domain
+                and "noreply" not in address.lower()
+                and "no-reply" not in address.lower()
+                and not any(char.isspace() for char in address)
+            ):
+                eligible.append((address, lead))
+        return len(leads), eligible
+
+    def draft_campaign(self, csv_filepath, *, max_drafts=50, output=None):
+        """Write a local report containing drafts generated from the CSV."""
+        if max_drafts < 0:
+            raise ValueError("maximum number of drafts must be non-negative")
+
+        rows, eligible = self._read_recipients(csv_filepath)
+        drafts = []
+        for address, lead in eligible[:max_drafts]:
+            subject, body = self.generate_pitch(lead)
+            drafts.append({"email": address, "subject": subject, "body": body})
+
+        report = {
+            "mode": "draft",
+            "input_rows": rows,
+            "eligible_rows": len(eligible),
+            "draft_count": len(drafts),
+            "sent_count": 0,
+            "drafts": drafts,
+        }
+        if output is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+            output = f"campaign_drafts_{timestamp}.json"
+        report_path = Path(output)
+        with report_path.open("x", encoding="utf-8") as file:
+            json.dump(report, file, ensure_ascii=False, indent=2)
+            file.write("\n")
+        return report_path
+
     def fire_campaign(self, csv_filepath: str, delay: int = 5, max_emails: int = 50):
-        """Execute email campaign from CSV file."""
-        print(f"\n[*] Loading leads from {csv_filepath}...")
-        try:
-            with open(csv_filepath, 'r', encoding='utf-8') as f:
-                leads = list(csv.DictReader(f))
-        except Exception as e:
-            print(f"[-] Error reading CSV: {e}")
-            return
+        """Generate drafts unless the caller explicitly enabled sending."""
+        if not self._allow_send:
+            return self.draft_campaign(csv_filepath, max_drafts=max_emails)
 
-        # Filter leads with valid emails
-        valid = [l for l in leads if l.get('Email') and
-                 '@' in l.get('Email', '') and
-                 'noreply' not in l.get('Email', '').lower() and
-                 l.get('Email') != 'Requires Manual Check']
-
-        print(f"[*] {len(valid)} valid targets out of {len(leads)} total")
+        rows, eligible = self._read_recipients(csv_filepath)
+        print(f"[*] {len(eligible)} valid targets out of {rows} total")
         print(f"[*] Delay: {delay}s between emails | Max: {max_emails}")
 
-        if not self.connect():
+        targets = eligible[:max_emails]
+        if not targets or not self.connect():
             return
 
-        for i, lead in enumerate(valid[:max_emails]):
-            target = lead['Email']
-            subject, body = self.generate_pitch(lead)
+        for i, (target, lead) in enumerate(targets):
+            subject, body = self.generate_pitch(lead, use_ai=True)
 
             if self.send_email(target, subject, body):
-                print(f"  [+] SENT ({i+1}/{min(len(valid), max_emails)}): {target}")
+                print(f"  [+] SENT ({i+1}/{len(targets)}): {target}")
             else:
                 print(f"  [-] FAIL ({i+1}): {target}")
 
@@ -230,6 +257,20 @@ Anuj (M4ST Autonomous Systems)"""
                 pass
 
 
-if __name__ == "__main__":
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Generate a local outreach draft report.")
+    parser.add_argument("input", nargs="?", default="premium_b2b_leads.csv", help="lead CSV path")
+    parser.add_argument("-o", "--output", help="path for a new JSON report")
+    parser.add_argument("--max-drafts", type=int, default=50, help="maximum drafts to include")
+    args = parser.parse_args(argv)
     engine = ColdEmailEngine()
-    engine.fire_campaign("premium_b2b_leads.csv", delay=5, max_emails=50)
+    try:
+        report = engine.draft_campaign(args.input, max_drafts=args.max_drafts, output=args.output)
+    except (OSError, UnicodeError, csv.Error, ValueError) as error:
+        parser.exit(1, f"Could not write draft report: {error}\n")
+    print(f"Draft report saved to {report}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

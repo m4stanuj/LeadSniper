@@ -13,10 +13,12 @@ Features:
   - CSV + JSON export
   - Campaign-ready DM generation
 """
-import os, sys, json, csv, time, re, hashlib, urllib.request
+import os, sys, json, time, urllib.request
 from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
+
+from spreadsheet_csv import write_spreadsheet_csv
 
 load_dotenv()
 
@@ -282,12 +284,15 @@ Rules: Professional but casual. Max 4 sentences. Include a clear CTA."""
 class EmailSender:
     """SMTP-based email sender with HTML templates and rate limiting."""
 
-    def __init__(self):
-        self.address = os.getenv("GMAIL_ADDRESS", "")
-        self.password = os.getenv("GMAIL_APP_PASSWORD", "")
+    def __init__(self, *, allow_send: bool = False):
+        self._allow_send = allow_send is True
+        self.address = os.getenv("GMAIL_ADDRESS", "") if self._allow_send else ""
+        self.password = os.getenv("GMAIL_APP_PASSWORD", "") if self._allow_send else ""
         self.server = None
 
     def connect(self):
+        if not self._allow_send:
+            return False
         if not self.address or not self.password:
             print("[-] Gmail credentials missing in .env")
             return False
@@ -303,7 +308,7 @@ class EmailSender:
             return False
 
     def send(self, to_email: str, subject: str, body: str):
-        if not self.server:
+        if not self._allow_send or not self.server:
             return False
         from email.mime.text import MIMEText
         from email.mime.multipart import MIMEMultipart
@@ -337,10 +342,10 @@ def export_leads(leads: list, base_name: str = "leads"):
     # CSV export
     csv_file = f"{base_name}_{ts}.csv"
     if leads:
+        fields = list(dict.fromkeys(field for lead in leads for field in lead))
         with open(csv_file, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=leads[0].keys())
-            writer.writeheader()
-            writer.writerows(leads)
+            rows = ([lead.get(field) for field in fields] for lead in leads)
+            write_spreadsheet_csv(f, fields, rows)
 
     return json_file, csv_file
 
